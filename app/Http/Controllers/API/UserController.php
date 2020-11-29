@@ -85,8 +85,6 @@ class UserController extends Controller
                 'error' => $error
             ], 'Authentification Failed', 500);
         }
-
-
     }
 
     public function logout(Request $request)
