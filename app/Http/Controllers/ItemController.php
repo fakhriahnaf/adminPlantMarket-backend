@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Http\Requests\UserRequest;
-class UserController extends Controller
+use App\Models\Item;
+use Yajra\DataTables\Facades\DataTables;
+use App\Http\Requests\ItemRequest;
+
+
+class ItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +18,13 @@ class UserController extends Controller
     public function index()
     {
         //
+        $itemz = Item::paginate(10);
 
-        $user = User::paginate(10);
-
-        return view('users.index', ['user' => $user]);
+        return view('items.index', ['itemz' => $itemz]);
+        // return view('items.index')->with([
+        //     'item' => $item
+        // ]);
+        
     }
 
     /**
@@ -29,7 +35,7 @@ class UserController extends Controller
     public function create()
     {
         //
-        return view('users.create');
+        return view('items.create');
     }
 
     /**
@@ -38,16 +44,16 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserRequest $request)
+    public function store(ItemRequest $request)
     {
         //
         $data = $request->all();
         //$data['profile_photo_path'] = $request->file('profile_photo_path')->store('asssets/user','public');
-        $data['picturePath'] = $request->file('picturePath')->store('assets/user', 'public');
-        //$data['picturePath'] = $request->file('picturePath')->store('assets/user', 'public');
-        User::create($data);
+        $data['picturePath'] = $request->file('picturePath')->store('assets/item', 'public');
+        Item::create($data);
 
-        return redirect()->route('users.index');
+        return redirect()->route('items.index');
+
     }
 
     /**
@@ -56,7 +62,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Item $item)
     {
         //
     }
@@ -67,11 +73,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Item $item)
     {
         //
-        return view('users.edit', [
-            'item' => $user
+        return view('items.edit', [
+            'item' => $item
         ]);
     }
 
@@ -82,18 +88,19 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(ItemRequest $request, Item $item)
     {
         //
         $data = $request->all();
 
-        if($request -> file('profile_picture_path'))
+        if($request->file('picturePath'))
         {
-            $data['profile_picture_path'] =$request->file('profile_picture_path')->store('assets/user','public'); 
+            $data['picturePath'] = $request->file('picturePath')->store('assets/item', 'public');
         }
-        $user ->update($data);
-        
-        return redirect()->route('users.index');
+
+        $item->update($data);
+
+        return redirect()->route('items.index');
     }
 
     /**
@@ -102,10 +109,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Item $item)
     {
         //
-        $user->delete();
-        return redirect()->route('users.index');
+        $item->delete();
+
+        return redirect()->route('items.index');
     }
 }
